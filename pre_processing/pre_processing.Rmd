@@ -1,0 +1,120 @@
+---
+title: "pre_processing"
+author: "Max O'Krepki"
+date: "August 14, 2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Loading the libraries 
+```{r}
+library(googlesheets)
+library(dplyr)
+library(revgeo)
+library(rgdal)
+library(sp)
+library(leaflet)
+library(rgeos)
+library(rbenchmark)
+```
+
+
+Setting up the working directory 
+```{r}
+setwd("C:\\Users\\Derek\\Documents\\GitHub\\sonoma_dashboard\\pre_processing")
+rm(list = ls())
+load(".RData")
+key <- secret_key_finder()
+```
+
+
+```{r}
+sheet_url <- "https://docs.google.com/spreadsheets/d/1qBAz09Ro3zoqKQRehRM4T8ntjFyaE_-wXuVW88cW45Q/"
+parcel_data <- gs_url(sheet_url) %>% gs_read("sonoma_work", range = "A1:N5052")
+
+# Filter out missing data. 
+parcel_data <- parcel_data[complete.cases(parcel_data$area_m2),]
+save(parcel_data, file = "parcel_data.RData")
+```
+
+Refer to this for reverse geocoding. 
+https://cran.r-project.org/web/packages/revgeo/revgeo.pdf
+
+
+Load the shapefile
+```{r}
+# Have to add a zero to the APN in parcel data for it to match 
+parcel_data$APN <- paste( "0", parcel_data$APN, sep = "")
+
+data.shape <- readOGR(dsn='./epaparcels', layer = "epaparcelsuit2")
+data.shape <- data.shape[ data.shape@data$APN %in% parcel_data$APN ,]
+data.shape <- spTransform(data.shape, "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+dim(data.shape)
+```
+
+Find the centroids
+```{r}
+parcel_centers.shape <- SpatialPointsDataFrame(gCentroid(data.shape, byid=TRUE), data.shape@data, match.ID=FALSE)
+parcel_centers.coords <- as.data.frame(parcel_centers.shape@coords)
+parcel_centers.coords <- cbind(parcel_centers.shape@data$APN, parcel_centers.coords)
+names(parcel_centers.coords) <- c("APN","lng","lat")
+View(parcel_centers.coords)
+```
+
+Write a function that will take in the coordinates, call revgeo, wait half a second then repeat. 
+```{r}
+address_finder <- function(lng, lat) {
+  # Sys.sleep(0.5)
+  return(revgeo(lng, lat, provider = "google", API = key))
+}
+```
+
+address_finder(parcel_centers.coords$lng[1], parcel_centers.coords$lat[1])
+Getting the addresses
+```{r}
+parcel_centers.coords$address <- mapply(address_finder, lng = parcel_centers.coords$lng, lat = parcel_centers.coords$lat)
+```
+
+Add the area_sqf column
+```{r}
+parcel_data$area_sqf <- parcel_data$area_m2*10.7639
+```
+
+Add the eligibility column here
+Write the helper function
+```{r}
+adu_type <- function(area) {
+  if (area > 7500) {
+    return("detached")
+  } else if (area > 5500) {
+    return("attached") 
+  } else {
+    return("none")
+  }
+}
+
+parcel_data$adu_type <- unlist(lapply(parcel_data$area_sqf, adu_type))
+```
+
+
+Joining the required parcel data to the polygons spatial dataframe. 
+```{r}
+parcel_data.shape <- data.shape
+parcel_data.shape@data <- parcel_data.shape@data %>% subset(select = APN) 
+# parcel_data.shape@data <- parcel_data.shape@data %>% left_join(parcel_data, by = "APN") %>% left_join(y = {subset(parcel_centers.coords, select = c(APN, address))}, by = "APN") # Good to remember but I actually need the centroids for the map. 
+parcel_data.shape@data <- parcel_data.shape@data %>% left_join(parcel_data, by = "APN") %>% left_join(parcel_centers.coords, by = "APN")
+View(parcel_data.shape@data)
+```
+
+
+
+Use to save the new .RData file
+```{r}
+save(parcel_data.shape, file = "parcel_data.RData")
+```
+

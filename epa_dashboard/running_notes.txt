@@ -1,0 +1,17 @@
+Eventually need to hide the API key in the preprocessing step. 
+	Don't push commits to master until I figure out how to remove the API
+
+
+So I think it's ready to be merged back into the master and get published. 
+	Actually just need to update the area requirement then it's good to go.  
+
+
+
+
+
+  
+
+post on graphhopper 
+
+fix stockton dashboard stuff
+
