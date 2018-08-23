@@ -114,6 +114,8 @@ leaflet(data.shape.clusters) %>%
 Joining the buildings to the parcels
 This returns for each building, the associated parcel info. 
 ```{r}
-data.shape.joined <- over(data.shape.bldg, data.shape, returnList = FALSE)
+data.shape.joined <- over(data.shape.clusters, data.shape, returnList = FALSE)
+data.shape.joined <- cbind(data.shape.joined$LU_Desc, data.shape.clusters@data)
+data.shape.joined <- data.shape.joined[complete.cases(data.shape.joined$`data.shape.joined$LU_Desc`),]
 ```
 
