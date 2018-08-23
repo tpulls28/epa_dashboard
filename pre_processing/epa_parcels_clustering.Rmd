@@ -84,7 +84,10 @@ ggplot() + geom_histogram(aes(x = data.shape.bldg.sfr@data$areaperim), binwidth 
 Load the shapefile with the clusters
 ```{r}
 data.shape.clusters <- readOGR(dsn= "./epaBldgsGroups", layer = "epaBldgsGroups")
+data.shape.clusters.sfr <- readOGR(dsn= "./epabldg_joined_sfr_groups", layer = "epabldg_joined_sfr_groups")
 ```
+
+
 
 Summarize the clusters here. 
 ```{r}
@@ -96,10 +99,10 @@ Map the clusters
 
 pal <- colorFactor(
     palette = "Set1",
-    domain = data.shape.clusters@data$SS_GROUP)
+    domain = data.shape.clusters.sfr@data$SS_GROUP)
 # pal <- brewer.pal(n = 4, "Set1")
 
-leaflet(data.shape.clusters) %>% 
+leaflet(data.shape.clusters.sfr) %>% 
     addProviderTiles(providers$Stamen.Toner) %>%
     addPolygons(stroke = TRUE,opacity = 1,fillOpacity = 0.9, smoothFactor = 0.5,
                 color=~pal(SS_GROUP),weight = 1) %>%
