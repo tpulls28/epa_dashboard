@@ -26,13 +26,14 @@ library(rbenchmark)
 
 Setting up the working directory 
 ```{r}
-setwd("C:\\Users\\Derek\\Documents\\GitHub\\sonoma_dashboard\\pre_processing")
+setwd("C:\\Users\\Derek\\Documents\\GitHub\\epa_dashboard\\pre_processing")
 rm(list = ls())
 load(".RData")
 key <- secret_key_finder()
 ```
 
 
+Reading in just a selection of the epa_parcels data. 
 ```{r}
 sheet_url <- "https://docs.google.com/spreadsheets/d/1qBAz09Ro3zoqKQRehRM4T8ntjFyaE_-wXuVW88cW45Q/"
 parcel_data <- gs_url(sheet_url) %>% gs_read("sonoma_work", range = "A1:N5052")
@@ -46,7 +47,7 @@ Refer to this for reverse geocoding.
 https://cran.r-project.org/web/packages/revgeo/revgeo.pdf
 
 
-Load the shapefile
+Load the shapefile - epa parcels. 
 ```{r}
 # Have to add a zero to the APN in parcel data for it to match 
 parcel_data$APN <- paste( "0", parcel_data$APN, sep = "")
@@ -110,7 +111,6 @@ parcel_data.shape@data <- parcel_data.shape@data %>% subset(select = APN)
 parcel_data.shape@data <- parcel_data.shape@data %>% left_join(parcel_data, by = "APN") %>% left_join(parcel_centers.coords, by = "APN")
 View(parcel_data.shape@data)
 ```
-
 
 
 Use to save the new .RData file
