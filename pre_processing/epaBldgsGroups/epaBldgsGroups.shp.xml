@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20180823</CreaDate><CreaTime>12312300</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.5\ArcToolbox\Toolboxes\Data Management Tools.tbx\DeleteField" Date="20180823" Time="123123">DeleteField epaBldgsGroups START_X;START_Y;MID_X;MID_Y;END_X;END_Y;PNT_COUNT;EXT_MIN_X;EXT_MIN_Y;EXT_MAX_X;EXT_MAX_Y;shaperat;ID</Process></lineage></DataProperties></Esri></metadata>
