@@ -23,9 +23,10 @@ library(leaflet)
 library(rgeos)
 library(rbenchmark)
 library(ggplot2)
-library(raster)
+# library(raster)
 library(leaflet)
 library(RColorBrewer)
+library(maptools)
 ```
 
 
@@ -99,7 +100,7 @@ pal <- colorFactor(
 # pal <- brewer.pal(n = 4, "Set1")
 
 leaflet(data.shape.clusters) %>% 
-    addTiles() %>%
+    addProviderTiles(providers$Stamen.Toner) %>%
     addPolygons(stroke = TRUE,opacity = 1,fillOpacity = 0.9, smoothFactor = 0.5,
                 color=~pal(SS_GROUP),weight = 1) %>%
     addLegend("bottomright", pal = pal, values = ~SS_GROUP,
@@ -109,4 +110,10 @@ leaflet(data.shape.clusters) %>%
     )
 
 ``` 
+
+Joining the buildings to the parcels
+This returns for each building, the associated parcel info. 
+```{r}
+data.shape.joined <- over(data.shape.bldg, data.shape, returnList = FALSE)
+```
 
