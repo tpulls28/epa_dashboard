@@ -1,0 +1,12 @@
+name: epa_dashboard
+title: epa_dashboard
+username:
+account: maxok
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 406402
+bundleId: 1550951
+url: https://maxok.shinyapps.io/epa_dashboard/
+when: 1535040881.08259
+asMultiple: FALSE
+asStatic: FALSE
