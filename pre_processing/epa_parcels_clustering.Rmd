@@ -1,0 +1,112 @@
+---
+title: "EPA Parcels Clustering"
+author: "Max O'Krepki"
+date: "August 23, 2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Loading the libraries 
+```{r}
+# library(googlesheets)
+library(dplyr)
+# library(revgeo)
+library(rgdal)
+library(sp)
+library(leaflet)
+library(rgeos)
+library(rbenchmark)
+library(ggplot2)
+library(raster)
+library(leaflet)
+library(RColorBrewer)
+```
+
+
+```{r}
+setwd("C:\\Users\\Derek\\Documents\\GitHub\\epa_dashboard\\pre_processing")
+rm(list = ls())
+load(".RData")
+```
+
+
+EPA parcels shapefile is already in the .RData file. 
+Load the shapefile - epa parcels. 
+```{r}
+# Have to add a zero to the APN in parcel data for it to match 
+# parcel_data$APN <- paste( "0", parcel_data$APN, sep = "")
+
+data.shape.bldg <- readOGR(dsn='./epabldg', layer = "epabldg")
+# It's already in the correct coordinate system. 
+# data.shape <- data.shape[ data.shape@data$APN %in% parcel_data$APN ,]
+# Have to convert the coordinate system here. 
+# data.shape <- spTransform(data.shape, "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+# dim(data.shape)
+```
+
+Need to clip to just SFR, the data.shape file has this. 
+Could add an id column to the buildings, then do a spatial join. I would first cut down to the columns I'm interested in. 
+```{r}
+# Not sure if it worked, it created more rows and I'm not sure how that would happen. Buildings on multiple  parcels?
+# data.shape.bldg.sfr <- intersect(data.shape.bldg, data.shape)
+# Just comparing the two
+# par(mfrow=c(1,2))
+# plot(data.shape.bldg)
+# plot(data.shape.bldg.sfr)
+
+data.shape.bldg.sfr <- data.shape.bldg
+data.shape.bldg.sfr@data <- data.shape.bldg.sfr@data[,2:4]
+```
+
+Plotting
+```{r}
+# Building area
+summary(data.shape.bldg.sfr@data$bldgarea)
+ggplot() + geom_histogram(aes(x = data.shape.bldg.sfr@data$bldgarea), binwidth = 30) + xlim(c(0,9000))
+
+
+# Building perimeter
+summary(data.shape.bldg.sfr@data$bldgperim)
+ggplot() + geom_histogram(aes(x = data.shape.bldg.sfr@data$bldgperim), binwidth = 5) + xlim(c(0,1000))
+
+# Building area/perimeter
+summary(data.shape.bldg.sfr@data$areaperim)
+ggplot() + geom_histogram(aes(x = data.shape.bldg.sfr@data$areaperim), binwidth = 1) + xlim(c(0,60))
+```
+
+Load the shapefile with the clusters
+```{r}
+data.shape.clusters <- readOGR(dsn= "./epaBldgsGroups", layer = "epaBldgsGroups")
+```
+
+Summarize the clusters here. 
+```{r}
+data.shape.clusters@data %>% group_by(SS_GROUP) %>% summarize("area" = mean(bldgarea), "perimeter" = mean(bldgperim))
+```
+
+Map the clusters
+```{r}
+
+pal <- colorFactor(
+    palette = "Set1",
+    domain = data.shape.clusters@data$SS_GROUP)
+# pal <- brewer.pal(n = 4, "Set1")
+
+leaflet(data.shape.clusters) %>% 
+    addTiles() %>%
+    addPolygons(stroke = TRUE,opacity = 1,fillOpacity = 0.9, smoothFactor = 0.5,
+                color=~pal(SS_GROUP),weight = 1) %>%
+    addLegend("bottomright", pal = pal, values = ~SS_GROUP,
+              title = "Group",
+              labFormat = labelFormat(prefix = ""),
+              opacity = 1
+    )
+
+``` 
+
