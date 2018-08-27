@@ -21,6 +21,7 @@ library(sp)
 library(leaflet)
 library(rgeos)
 library(rbenchmark)
+library(readr)
 ```
 
 
@@ -116,5 +117,11 @@ View(parcel_data.shape@data)
 Use to save the new .RData file
 ```{r}
 save(parcel_data.shape, file = "parcel_data.RData")
+```
+
+Writing the parcel_data.shape@data df to a csv
+```{r}
+parcel_data.shape@data$address <- as.character(parcel_data.shape@data$address)
+write_csv(as.data.frame(parcel_data.shape@data), "epa_parcel_info.csv")
 ```
 
