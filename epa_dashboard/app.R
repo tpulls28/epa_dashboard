@@ -212,7 +212,7 @@ ui <- fluidPage(
                         mainPanel(
                           fluidRow(
                             column(6,
-                          leafletOutput("map", height = '700px')
+                          leafletOutput("map", height = '500px')
                             ),
                           column(6,
                                  # dataTableOutput("parcel_df")
