@@ -7,3 +7,4 @@ source('update_cost.R')
 parcel_data <- get(load("epa_parcel_data_merged.RData"))
 
 save.image(file= ".RData")
+install.packages('shinydashboard')

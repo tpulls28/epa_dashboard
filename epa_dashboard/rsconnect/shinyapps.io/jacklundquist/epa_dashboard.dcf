@@ -1,0 +1,12 @@
+name: epa_dashboard
+title: epa_dashboard
+username:
+account: jacklundquist
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 506013
+bundleId: 1637891
+url: https://jacklundquist.shinyapps.io/epa_dashboard/
+when: 1539291236.46794
+asMultiple: FALSE
+asStatic: FALSE

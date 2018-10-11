@@ -13,11 +13,12 @@
 # setwd("C:\\Users\\Derek\\Documents\\GitHub\\epa_dashboard\\epa_dashboard")
 rm(list = ls())
 
-
 library(shiny)
 library(googlesheets)
 library(dplyr)
 library(leaflet)
+library(shinydashboard)
+
 
 load(".RData")
 
@@ -75,7 +76,7 @@ ui <- fluidPage(
                          tags$li("Addition of windows to meet natural light requirements"),
                          tags$li("Costs of bathroom and kitchen additions (if eligible)"))
                        ),
-                       p("In past projects, these conditions have added $___-___ to the project budget."),
+                       span("In past projects, these conditions have added $___-___ to the project budget."),
                        h3("Special Circumstances"), 
                        br(),
                        strong("There are two special circumstances to be aware of:"),
@@ -209,17 +210,50 @@ ui <- fluidPage(
                           style = "height:700px;overflow-y: scroll"
                         ),
                         mainPanel(
-                          # dataTableOutput("parcel_df")
-                          textOutput("parcel_df"),
-                          textOutput("parcel_info"),
-                          textOutput("costEstimate"),
-                          leafletOutput("map"),
-                          br(),
-                          textOutput("cost_estimate")
+                          fluidRow(
+                            column(6,
+                          leafletOutput("map", height = '700px')
+                            ),
+                          column(6,
+                                 # dataTableOutput("parcel_df")
+                                 #textOutput("parcel_df"),
+                                 #valueBoxOutput('structureVal'),
+                                 #valueBoxOutput("parcel_area"),
+                                 #valueBoxOutput('cost_estimate'),
+                                 valueBox(textOutput('structureVal'), strong("Building Value"), icon = icon("usd"), color = 'green'),
+                                 tags$head(tags$style("#structureVal{
+                                 font-size: 14px; height: 50px;
+                                                      }"
+                                 )
+                                 ),
+                                 valueBox(textOutput('parcel_area'), strong("Parcel Area"), icon = icon("home"), color = 'yellow'),
+                                 tags$head(tags$style("#parcel_area{
+                                 font-size: 14px; height: 50px;
+                                                      }"
+                                 )
+                                 ),
+                                 valueBox(textOutput("cost_estimate"), strong("Estimated Construction Cost"), icon = icon("pencil"), color = 'orange'),
+                                 tags$head(tags$style("#cost_estimate{
+                                 font-size: 14px; height: 55px;
+                                                      }"
+                                 )
+                                 ),
+                                 box(textOutput("parcel_info"),height = '60%', width = '100%'),
+                                 tags$head(tags$style("#parcel_info{
+                                 font-size: 14px; vertical-align: middle;
+                                                      }"
+                                 )
+                                 )
+                                 
+                                 
+                          )
+                          
+                          
                         )
                       )
               )
     )
+  )
 )
 
 # Define the server logic 
@@ -236,7 +270,7 @@ server <- function(input, output, session) {
   
   #This needs to be fixed
   
-  structure_val <- eventReactive(input$go, {structure_val <- filter(parcel_data, address == input$address)$IMPROVEMEN[1]})
+  structure_val <- eventReactive(input$go, {structure_val <- as.character(filter(parcel_data, address == input$address)$IMPROVEMEN[1])})
   
   sfha_flag <- eventReactive(input$go, {sfha_flag <- filter(parcel_data, address == input$address)$SFHA_FLAG[1]})
   
@@ -250,9 +284,9 @@ server <- function(input, output, session) {
   
   numBedrooms <- eventReactive(input$go, {numBedrooms <- filter(parcel_data, address == input$address)$FLOOD_FLAG[1]})
   
-  output$parcel_info <- renderText({gen_report(type(), area_sqf(), structure_val(), sfha_flag(), flood_flag())})
+  output$parcel_info <- renderText({gen_report(type(), sfha_flag(), flood_flag())})
   
-  output$cost_estimate <- renderText({paste("Current Estimate of Construction Cost: $", updateCost(arrayOfQuestions))})
+  output$cost_estimate <- renderText({paste("$", updateCost(arrayOfQuestions))})
   
   observeEvent({
     input$garage_lw
@@ -271,7 +305,7 @@ server <- function(input, output, session) {
     arrayOfQuestions <- list(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
-    output$cost_estimate <- renderText({paste("Current Estimate of Construction Cost: $", updateCost(arrayOfQuestions))})
+    output$cost_estimate <- renderText({paste("$", updateCost(arrayOfQuestions))})
   })
   
   observeEvent(input$go, {
@@ -280,11 +314,14 @@ server <- function(input, output, session) {
     arrayOfQuestions <- list(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
-    output$cost_estimate <- renderText({paste("Current Estimate of Construction Cost: $", updateCost(arrayOfQuestions))})
+    output$cost_estimate <- renderText({paste("$", updateCost((arrayOfQuestions)))})
     updateNumericInput(session, "lot_size", value = as.integer(lotSize()))
     updateNumericInput(session, "building_footprint", value = as.integer(buildingFootprint()))
     updateNumericInput(session, "assessed_val", value = as.integer(assessedVal()))
     updateNumericInput(session, "num_bedrooms", value = as.integer(numBedrooms()))
+    output$structureVal <- renderText({structure_val()})
+    output$parcel_area <- renderText({paste(as.integer(buildingFootprint()), 'square feet')})
+    
   })
   
 }
