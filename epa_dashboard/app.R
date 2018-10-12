@@ -102,104 +102,98 @@ ui <- fluidPage(
                           selectizeInput("address", "Enter address here:", input_options),
                           actionButton("go", "Go!"),
                           br(),
-                          tabsetPanel(type = "tabs",
-                                      tabPanel("Building Specs",
-                                               br(),
-                                               p("Based on public records, we have made the 
-                                                 following estimates. You are welcome to make modifications 
-                                                 to these numbers if you feel they are off."),
-                                               numericInput("lot_size", 
-                                                            span("Lot Size"), 
-                                                            value = 1),
-                                               numericInput("building_footprint", 
-                                                            span("Building Footprint"), 
-                                                            value = 1),
-                                               numericInput("assessed_val", 
-                                                            span("Current Assessed Value"), 
-                                                            value = 1),
-                                               numericInput("num_bedrooms", 
-                                                            span("Current Number of Bedrooms"), 
-                                                            value = 1)
-                                      ),
-                                      tabPanel("How Much Will My Garage Conversion Cost?",
-                                               br(),
-                                               p("The next few questions will help you identify cost drivers."),
-                                               radioButtons("garage_lw", 
-                                                                  h5("What’s the estimated length and width of my garage?"), 
-                                                                  choices = list("Choice 1" = 1, 
-                                                                                 "Choice 2" = 2, 
-                                                                                 "Choice 3" = 3),
-                                                                  selected = 1),
-                                               radioButtons("water_heater", 
-                                                                  h5("Is there a water heater in my garage?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("electrical_panel", 
-                                                                  h5("Is my electrical panel or meter within 3ft of my gas meter?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("structural_mods", 
-                                                                  h5("Are there any known structural modifications to garage floor, walls, or ceiling?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("ceiling_joists", 
-                                                                  h5("Is there attic access? If so, and if you can inspect the attic, what’s the size and spacing of ceiling joists?"), 
-                                                                  choices = list("Choice 1" = 1, 
-                                                                                 "Choice 2" = 2, 
-                                                                                 "Choice 3" = 3),
-                                                                  selected = 1),
-                                               radioButtons("ventilation", 
-                                                                  h5("Does there appear to be ventilation in the ceiling space? From the outside of the garage, can you see evenly spaced holes where the roof meets the wall?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("exterior_door", 
-                                                                  h5("Is there a normal exterior door on your garage?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("exterior_door_pt2", 
-                                                                  h5("If you answered yes to the last question, does it have a 3ft by 3ft landing outside?"), 
-                                                                     choices = list("Yes" = 1, 
-                                                                                   "No" = 2, 
-                                                                                   "I don't know" = 3,
-                                                                                   "I didn't answer yes"),
-                                                                                    selected = 1),
+                          br(),
+                          p("Based on public records, we have made the 
+                           following estimates. You are welcome to make modifications 
+                           to these numbers if you feel they are off."),
+                         numericInput("lot_size", 
+                                      span("Lot Size"), 
+                                      value = 1),
+                         numericInput("building_footprint", 
+                                      span("Building Footprint"), 
+                                      value = 1),
+                         numericInput("assessed_val", 
+                                      span("Current Assessed Value"), 
+                                      value = 1),
+                         numericInput("num_bedrooms", 
+                                      span("Current Number of Bedrooms"), 
+                                      value = 1),
+                         br(),
+                         strong("The next few questions will help you identify cost drivers."),
+                         radioButtons("garage_lw", 
+                                            h5("What’s the estimated length and width of my garage?"), 
+                                            choices = list("Choice 1" = 1, 
+                                                           "Choice 2" = 2, 
+                                                           "Choice 3" = 3),
+                                            selected = 1),
+                         radioButtons("water_heater", 
+                                            h5("Is there a water heater in my garage?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("electrical_panel", 
+                                            h5("Is my electrical panel or meter within 3ft of my gas meter?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("structural_mods", 
+                                            h5("Are there any known structural modifications to garage floor, walls, or ceiling?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("ceiling_joists", 
+                                            h5("Is there attic access? If so, and if you can inspect the attic, what’s the size and spacing of ceiling joists?"), 
+                                            choices = list("Choice 1" = 1, 
+                                                           "Choice 2" = 2, 
+                                                           "Choice 3" = 3),
+                                            selected = 1),
+                         radioButtons("ventilation", 
+                                            h5("Does there appear to be ventilation in the ceiling space? From the outside of the garage, can you see evenly spaced holes where the roof meets the wall?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("exterior_door", 
+                                            h5("Is there a normal exterior door on your garage?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("exterior_door_pt2", 
+                                            h5("If you answered yes to the last question, does it have a 3ft by 3ft landing outside?"), 
+                                               choices = list("Yes" = 1, 
+                                                             "No" = 2, 
+                                                             "I don't know" = 3,
+                                                             "I didn't answer yes"),
+                                                              selected = 1),
 
-                                               radioButtons("glass_area", 
-                                                                  h5("What’s the estimated total area of glass in windows or doors in the garage?"), 
-                                                                  choices = list("Choice 1" = 1, 
-                                                                                 "Choice 2" = 2, 
-                                                                                 "Choice 3" = 3),
-                                                                  selected = 1),
-                                               radioButtons("bathroom", 
-                                                                  h5("Are you considering adding a bathroom?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("kitchen", 
-                                                                  h5("Are you considering adding a kitchen?"), 
-                                                                  choices = list("Yes" = 1, 
-                                                                                 "No" = 2, 
-                                                                                 "I don't know" = 3),
-                                                                  selected = 1),
-                                               radioButtons("fire_sprinkler", 
-                                                                  h5("(Fire sprinkler question)"), 
-                                                                  choices = list("Choice 1" = 1, 
-                                                                                 "Choice 2" = 2, 
-                                                                                 "Choice 3" = 3),
-                                                                  selected = 1)
-                          )
-                          ),
+                         radioButtons("glass_area", 
+                                            h5("What’s the estimated total area of glass in windows or doors in the garage?"), 
+                                            choices = list("Choice 1" = 1, 
+                                                           "Choice 2" = 2, 
+                                                           "Choice 3" = 3),
+                                            selected = 1),
+                         radioButtons("bathroom", 
+                                            h5("Are you considering adding a bathroom?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("kitchen", 
+                                            h5("Are you considering adding a kitchen?"), 
+                                            choices = list("Yes" = 1, 
+                                                           "No" = 2, 
+                                                           "I don't know" = 3),
+                                            selected = 1),
+                         radioButtons("fire_sprinkler", 
+                                            h5("(Fire sprinkler question)"), 
+                                            choices = list("Choice 1" = 1, 
+                                                           "Choice 2" = 2, 
+                                                           "Choice 3" = 3),
+                                            selected = 1),
                           br(),
                           h4("Disclaimers:"),
                           p("This is an educational tool and not a substitute for professional advice."),
@@ -220,30 +214,37 @@ ui <- fluidPage(
                                  #valueBoxOutput('structureVal'),
                                  #valueBoxOutput("parcel_area"),
                                  #valueBoxOutput('cost_estimate'),
-                                 valueBox(textOutput('structureVal'), strong("Building Value"), icon = icon("usd"), color = 'green'),
-                                 tags$head(tags$style("#structureVal{
-                                 font-size: 14px; height: 50px;
-                                                      }"
-                                 )
-                                 ),
-                                 valueBox(textOutput('parcel_area'), strong("Parcel Area"), icon = icon("home"), color = 'yellow'),
-                                 tags$head(tags$style("#parcel_area{
-                                 font-size: 14px; height: 50px;
-                                                      }"
-                                 )
-                                 ),
-                                 valueBox(textOutput("cost_estimate"), strong("Estimated Construction Cost"), icon = icon("pencil"), color = 'orange'),
-                                 tags$head(tags$style("#cost_estimate{
-                                 font-size: 14px; height: 55px;
-                                                      }"
-                                 )
-                                 ),
+                                 #valueBox(textOutput('structureVal'), strong("Building Value"), icon = icon("usd"), color = 'green'),
+                                 #tags$head(tags$style("#structureVal{
+                                 #font-size: 14px; height: 50px;
+                                #                      }"
+                                 #)
+                                 #),
+                                 #valueBox(textOutput('parcel_area'), strong("Parcel Area"), icon = icon("home"), color = 'yellow'),
+                                 #tags$head(tags$style("#parcel_area{
+                                 #font-size: 14px; height: 50px;
+                                  #                    }"
+                                 #)
+                                 #),
+                                 #valueBox(textOutput("cost_estimate"), strong("Estimated Construction Cost"), icon = icon("pencil"), color = 'orange'),
+                                 #tags$head(tags$style("#cost_estimate{
+                                 #font-size: 14px; height: 55px;
+                                  #                    }"
+                                # )
+                                 #),
                                  box(textOutput("parcel_info"),height = '60%', width = '100%'),
                                  tags$head(tags$style("#parcel_info{
                                  font-size: 14px; vertical-align: middle;
                                                       }"
                                  )
-                                 )
+                                 ),
+                                br(),
+                                strong(textOutput("structureVal")),
+                                br(),
+                                strong(textOutput("parcel_area")),
+                                br()
+                                
+                                
                                  
                                  
                           )
@@ -252,6 +253,9 @@ ui <- fluidPage(
                         )
                       )
               )
+    ),
+    tabPanel("Export Final Construction Cost Estimate",
+             p('TESTING')
     )
   )
 )
@@ -319,8 +323,8 @@ server <- function(input, output, session) {
     updateNumericInput(session, "building_footprint", value = as.integer(buildingFootprint()))
     updateNumericInput(session, "assessed_val", value = as.integer(assessedVal()))
     updateNumericInput(session, "num_bedrooms", value = as.integer(numBedrooms()))
-    output$structureVal <- renderText({structure_val()})
-    output$parcel_area <- renderText({paste(as.integer(buildingFootprint()), 'square feet')})
+    output$structureVal <- renderText({paste("Building Value:", structure_val())})
+    output$parcel_area <- renderText({paste("Lot Area:", as.integer(buildingFootprint()), 'square feet')})
     
   })
   
