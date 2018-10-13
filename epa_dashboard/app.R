@@ -52,7 +52,7 @@ ui <- fluidPage(
                             development standards apply; refer to ___."),
                        br(),
                        h3("Project Costs"),
-                       strong("Standard project costs run a minimum of $___ and include:"),
+                       strong("Standard project costs run a minimum of $10,000 and include:"),
                        br(),
                        tags$div(tags$ul(
                          tags$li("Reframing the garage door, including a concrete curb"),
@@ -77,7 +77,7 @@ ui <- fluidPage(
                          tags$li("Addition of windows to meet natural light requirements"),
                          tags$li("Costs of bathroom and kitchen additions (if eligible)"))
                        ),
-                       span("In past projects, these conditions have added $___-___ to the project budget."),
+                       span("In past projects, these conditions have added $200-$5,000 to the project budget."),
                        h3("Special Circumstances"), 
                        br(),
                        strong("There are two special circumstances to be aware of:"),
