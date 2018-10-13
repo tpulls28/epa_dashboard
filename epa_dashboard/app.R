@@ -18,8 +18,6 @@ library(googlesheets)
 library(dplyr)
 library(leaflet)
 library(shinydashboard)
-library(ggplot2)
-library(gridExtra)
 
 load(".RData")
 
@@ -27,7 +25,7 @@ input_options <- parcel_data$address
 
 # Define UI for application
 ui <- fluidPage(
-  navbarPage("EPA Second Unit Dashboard",
+  navbarPage("EPA Garage Conversion Dashboard",
              tabPanel("Overview", 
                        h3("Project Types"),
                        span("There are three main retrofit options to a garage:"),
@@ -41,7 +39,7 @@ ui <- fluidPage(
                        strong("2. Bedroom + Bathroom:"),
                        span("Adding new plumbing can significantly 
                             increase the cost and complexity of the project. This can be considered the 
-                            addition of a bedroom and bathroom to the existing home, or used as
+                            addition of a bedroom and bathroom to the existing home and can be used as
                             a guest house."),
                        br(),
                        br(),
@@ -99,7 +97,9 @@ ui <- fluidPage(
                         sidebarPanel(
                           helpText("If you are a property owner in East Palo Alto, the following step-by-step tool 
                                    is designed to help you decide if a garage conversion is right for you and guide you 
-                                   to useful resources."),
+                                   to useful resources. The information is based on averages from similar projects
+                                   in the past, but are not meant to be precise or final. Porfessional consultation
+                                   is necessary to validate these rough estimates."),
                           selectizeInput("address", "Enter address here:", input_options),
                           actionButton("go", "Go!"),
                           br(),
@@ -197,10 +197,10 @@ ui <- fluidPage(
                                             selected = 1),
                           br(),
                           h4("Disclaimers:"),
-                          p("This is an educational tool and not a substitute for professional advice."),
+                          p("This is an educational tool and not a substitute for professional advice and consultation."),
                           p("Real costs and conditions may vary."),
                           p("The City of East Palo Alto is not liable to the user for any damages arising from the use of this tool."),
-                          p("No personal information is stored in the use of this tool. At the end of the tool, you are given the option to download results to your own device."),
+                          p("No personal information is stored in the use of this tool. At the end of this session, you are given the option to download results to your own device."),
                           p("Questions about or issues with this tool should be directed to ___."),
                           style = "height:700px;overflow-y: scroll"
                         ),
@@ -254,10 +254,6 @@ ui <- fluidPage(
               )
     ),
     tabPanel("Export Final Construction Cost Estimate",
-             downloadButton('export'),
-             br(),
-             br(),
-             br(),
              strong("Itemized Costs"),
              tableOutput("itemizedCosts2")
     )
@@ -334,10 +330,6 @@ server <- function(input, output, session) {
       stringsAsFactors = FALSE)
     output$itemizedCosts <- renderTable(dataTable)
     output$itemizedCosts2 <- renderTable(dataTable)
-    if(as.numeric(updateCost(arrayOfQuestions)) >= 0.4 * as.numeric(gsub('[$,]', '',structure_val()))){
-      output$costAlert <- renderText("You are at risk of your project exceeding 50% of the building's value. 
-                                     Projects of this size may require further city regulation.")
-    }
   })
   
   observeEvent(input$go, {
@@ -378,14 +370,6 @@ server <- function(input, output, session) {
                                      Projects of this size may require further city regulation.")
     }
   })
-  #output$export = downloadHandler(
-  #  filename = function() {"report.pdf"},
-  #  content = function(file) {
-  #    pdf(file, onefile = TRUE)
-  #    grid.arrange(itemizedCosts) 
-  #    dev.off()
-    #}
-  #)
   
 }
 
