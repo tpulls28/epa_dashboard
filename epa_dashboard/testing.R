@@ -4,6 +4,8 @@ setwd("C:/Users/jlund/Documents/GitHub/epa_dashboard/epa_dashboard")
 load(".RData")
 source('gen_report.R')
 source('update_cost.R')
+install.packages('gridExtra')
+install.packages('ggplot2')
 parcel_data <- get(load("epa_parcel_data_merged.RData"))
 
 save.image(file= ".RData")

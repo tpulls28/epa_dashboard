@@ -18,6 +18,8 @@ library(googlesheets)
 library(dplyr)
 library(leaflet)
 library(shinydashboard)
+library(ggplot2)
+library(gridExtra)
 
 load(".RData")
 
@@ -252,6 +254,10 @@ ui <- fluidPage(
               )
     ),
     tabPanel("Export Final Construction Cost Estimate",
+             downloadButton('export'),
+             br(),
+             br(),
+             br(),
              strong("Itemized Costs"),
              tableOutput("itemizedCosts2")
     )
@@ -328,6 +334,10 @@ server <- function(input, output, session) {
       stringsAsFactors = FALSE)
     output$itemizedCosts <- renderTable(dataTable)
     output$itemizedCosts2 <- renderTable(dataTable)
+    if(as.numeric(updateCost(arrayOfQuestions)) >= 0.4 * as.numeric(gsub('[$,]', '',structure_val()))){
+      output$costAlert <- renderText("You are at risk of your project exceeding 50% of the building's value. 
+                                     Projects of this size may require further city regulation.")
+    }
   })
   
   observeEvent(input$go, {
@@ -368,6 +378,14 @@ server <- function(input, output, session) {
                                      Projects of this size may require further city regulation.")
     }
   })
+  #output$export = downloadHandler(
+  #  filename = function() {"report.pdf"},
+  #  content = function(file) {
+  #    pdf(file, onefile = TRUE)
+  #    grid.arrange(itemizedCosts) 
+  #    dev.off()
+    #}
+  #)
   
 }
 
