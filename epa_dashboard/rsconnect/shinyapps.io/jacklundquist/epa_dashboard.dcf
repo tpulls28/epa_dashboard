@@ -5,8 +5,8 @@ account: jacklundquist
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 506013
-bundleId: 1637899
+bundleId: 1640198
 url: https://jacklundquist.shinyapps.io/epa_dashboard/
-when: 1539291488.9721
+when: 1539385171.17526
 asMultiple: FALSE
 asStatic: FALSE

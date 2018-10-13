@@ -19,7 +19,6 @@ library(dplyr)
 library(leaflet)
 library(shinydashboard)
 
-
 load(".RData")
 
 input_options <- parcel_data$address
@@ -206,7 +205,9 @@ ui <- fluidPage(
                         mainPanel(
                           fluidRow(
                             column(6,
-                          leafletOutput("map", height = '500px')
+                          leafletOutput("map", height = '500px'),
+                          br(),
+                          textOutput("costAlert")
                             ),
                           column(6,
                                  # dataTableOutput("parcel_df")
@@ -242,20 +243,17 @@ ui <- fluidPage(
                                 strong(textOutput("structureVal")),
                                 br(),
                                 strong(textOutput("parcel_area")),
-                                br()
-                                
-                                
-                                 
-                                 
-                          )
-                          
-                          
+                                br(),
+                                strong("Itemized Costs"),
+                                tableOutput("itemizedCosts")      
+                          ) 
                         )
                       )
               )
     ),
     tabPanel("Export Final Construction Cost Estimate",
-             p('TESTING')
+             strong("Itemized Costs"),
+             tableOutput("itemizedCosts2")
     )
   )
 )
@@ -310,6 +308,26 @@ server <- function(input, output, session) {
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
     output$cost_estimate <- renderText({paste("$", updateCost(arrayOfQuestions))})
+    dataTable <- data.frame(
+      Item = c("Question 1",
+               "Question 2",
+               "Question 3",
+               "Question 4",
+               "Question 5",
+               "Question 6",
+               "Question 7",
+               "Question 8",
+               "Question 9",
+               "Question 10",
+               "Question 11",
+               "Question 12",
+               'Total Cost'),
+      Cost = as.character(c(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
+                            input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
+                            input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler,updateCost((arrayOfQuestions)))),
+      stringsAsFactors = FALSE)
+    output$itemizedCosts <- renderTable(dataTable)
+    output$itemizedCosts2 <- renderTable(dataTable)
   })
   
   observeEvent(input$go, {
@@ -319,13 +337,36 @@ server <- function(input, output, session) {
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
     output$cost_estimate <- renderText({paste("$", updateCost((arrayOfQuestions)))})
+    dataTable <- data.frame(
+      Item = c("Question 1",
+               "Question 2",
+               "Question 3",
+               "Question 4",
+               "Question 5",
+               "Question 6",
+               "Question 7",
+               "Question 8",
+               "Question 9",
+               "Question 10",
+               "Question 11",
+               "Question 12",
+               'Total Cost'),
+      Cost = as.character(c(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
+                            input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
+                            input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler,updateCost((arrayOfQuestions)))),
+      stringsAsFactors = FALSE)
+    output$itemizedCosts <- renderTable(dataTable)
+    output$itemizedCosts2 <- renderTable(dataTable)
     updateNumericInput(session, "lot_size", value = as.integer(lotSize()))
     updateNumericInput(session, "building_footprint", value = as.integer(buildingFootprint()))
     updateNumericInput(session, "assessed_val", value = as.integer(assessedVal()))
     updateNumericInput(session, "num_bedrooms", value = as.integer(numBedrooms()))
     output$structureVal <- renderText({paste("Building Value:", structure_val())})
     output$parcel_area <- renderText({paste("Lot Area:", as.integer(buildingFootprint()), 'square feet')})
-    
+    if(as.numeric(updateCost(arrayOfQuestions)) >= 0.4 * as.numeric(gsub('[$,]', '',structure_val()))){
+      output$costAlert <- renderText("You are at risk of your project exceeding 50% of the building's value. 
+                                     Projects of this size may require further city regulation.")
+    }
   })
   
 }
