@@ -19,13 +19,14 @@ library(dplyr)
 library(leaflet)
 library(shinydashboard)
 
+
 load(".RData")
 
 input_options <- parcel_data$address
 
 # Define UI for application
 ui <- fluidPage(
-  navbarPage("EPA Second Unit Dashboard",
+  navbarPage("EPA Garage Conversion Dashboard",
              tabPanel("Overview", 
                        h3("Project Types"),
                        span("There are three main retrofit options to a garage:"),
@@ -39,15 +40,15 @@ ui <- fluidPage(
                        strong("2. Bedroom + Bathroom:"),
                        span("Adding new plumbing can significantly 
                             increase the cost and complexity of the project. This can be considered the 
-                            addition of a bedroom and bathroom to the existing home, or used as
+                            addition of a bedroom and bathroom to the existing home and can be used as
                             a guest house."),
                        br(),
                        br(),
                        strong("3. Bedroom + Bathroom + Kitchen:"),
                        span("This project is considered 
-                            not a garage conversion but an attached second unit, 
-                            which can be rented out separately from the main house. Many other 
-                            development standards apply; refer to ___."),
+                            an attached second unit rather than a garage conversion, 
+                            which can be rented out separately from the main house. However, many other 
+                            development standards apply as a result of this change; refer to ___."),
                        br(),
                        h3("Project Costs"),
                        strong("Standard project costs run a minimum of $___ and include:"),
@@ -81,8 +82,8 @@ ui <- fluidPage(
                        strong("There are two special circumstances to be aware of:"),
                        br(),
                        p("1. Some properties may be ineligible because the removal of a garage space and 
-                         addition of a bedroom create a parking demand that cannot be accommodated in an 
-                         existing driveway, or for other reasons. An attached or detached second unit project 
+                         addition of a bedroom creates a parking demand that is not reached by an 
+                         existing driveway. An attached or detached second unit project 
                          that does not involve the garage may still be feasible."),
                        p("2. If a garage has already been converted into a habitable 
                          space without a building permit, these existing modifications may present 
@@ -97,14 +98,15 @@ ui <- fluidPage(
                         sidebarPanel(
                           helpText("If you are a property owner in East Palo Alto, the following step-by-step tool 
                                    is designed to help you decide if a garage conversion is right for you and guide you 
-                                   to useful resources."),
+                                   to useful resources. The numbers presented are not exact or final, but based on the 
+                                   experience and data of homeowners who have done similar projects in the past."),
                           selectizeInput("address", "Enter address here:", input_options),
                           actionButton("go", "Go!"),
                           br(),
                           br(),
                           p("Based on public records, we have made the 
-                           following estimates. You are welcome to make modifications 
-                           to these numbers if you feel they are off."),
+                           following estimates. Please make corrections to these numbers 
+                           if you see that they are inaccurate."),
                          numericInput("lot_size", 
                                       span("Lot Size"), 
                                       value = 1),
@@ -195,19 +197,17 @@ ui <- fluidPage(
                                             selected = 1),
                           br(),
                           h4("Disclaimers:"),
-                          p("This is an educational tool and not a substitute for professional advice."),
+                          p("This is an educational tool and not a substitute for professional advice and consultation."),
                           p("Real costs and conditions may vary."),
                           p("The City of East Palo Alto is not liable to the user for any damages arising from the use of this tool."),
-                          p("No personal information is stored in the use of this tool. At the end of the tool, you are given the option to download results to your own device."),
+                          p("No personal information is stored in the use of this tool. At the end of this session, you are given the option to download results to your own device."),
                           p("Questions about or issues with this tool should be directed to ___."),
                           style = "height:700px;overflow-y: scroll"
                         ),
                         mainPanel(
                           fluidRow(
                             column(6,
-                          leafletOutput("map", height = '500px'),
-                          br(),
-                          textOutput("costAlert")
+                          leafletOutput("map", height = '500px')
                             ),
                           column(6,
                                  # dataTableOutput("parcel_df")
@@ -243,17 +243,20 @@ ui <- fluidPage(
                                 strong(textOutput("structureVal")),
                                 br(),
                                 strong(textOutput("parcel_area")),
-                                br(),
-                                strong("Itemized Costs"),
-                                tableOutput("itemizedCosts")      
-                          ) 
+                                br()
+                                
+                                
+                                 
+                                 
+                          )
+                          
+                          
                         )
                       )
               )
     ),
     tabPanel("Export Final Construction Cost Estimate",
-             strong("Itemized Costs"),
-             tableOutput("itemizedCosts2")
+             p('TESTING')
     )
   )
 )
@@ -308,26 +311,6 @@ server <- function(input, output, session) {
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
     output$cost_estimate <- renderText({paste("$", updateCost(arrayOfQuestions))})
-    dataTable <- data.frame(
-      Item = c("Question 1",
-               "Question 2",
-               "Question 3",
-               "Question 4",
-               "Question 5",
-               "Question 6",
-               "Question 7",
-               "Question 8",
-               "Question 9",
-               "Question 10",
-               "Question 11",
-               "Question 12",
-               'Total Cost'),
-      Cost = as.character(c(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
-                            input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
-                            input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler,updateCost((arrayOfQuestions)))),
-      stringsAsFactors = FALSE)
-    output$itemizedCosts <- renderTable(dataTable)
-    output$itemizedCosts2 <- renderTable(dataTable)
   })
   
   observeEvent(input$go, {
@@ -337,36 +320,13 @@ server <- function(input, output, session) {
                              input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
                              input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler)
     output$cost_estimate <- renderText({paste("$", updateCost((arrayOfQuestions)))})
-    dataTable <- data.frame(
-      Item = c("Question 1",
-               "Question 2",
-               "Question 3",
-               "Question 4",
-               "Question 5",
-               "Question 6",
-               "Question 7",
-               "Question 8",
-               "Question 9",
-               "Question 10",
-               "Question 11",
-               "Question 12",
-               'Total Cost'),
-      Cost = as.character(c(input$garage_lw,input$water_heater,input$electrical_panel,input$structural_mods,
-                            input$ceiling_joists,input$ventilation,input$exterior_door,input$exterior_door_pt2,
-                            input$glass_area,input$bathroom,input$kitchen,input$fire_sprinkler,updateCost((arrayOfQuestions)))),
-      stringsAsFactors = FALSE)
-    output$itemizedCosts <- renderTable(dataTable)
-    output$itemizedCosts2 <- renderTable(dataTable)
     updateNumericInput(session, "lot_size", value = as.integer(lotSize()))
     updateNumericInput(session, "building_footprint", value = as.integer(buildingFootprint()))
     updateNumericInput(session, "assessed_val", value = as.integer(assessedVal()))
     updateNumericInput(session, "num_bedrooms", value = as.integer(numBedrooms()))
     output$structureVal <- renderText({paste("Building Value:", structure_val())})
     output$parcel_area <- renderText({paste("Lot Area:", as.integer(buildingFootprint()), 'square feet')})
-    if(as.numeric(updateCost(arrayOfQuestions)) >= 0.4 * as.numeric(gsub('[$,]', '',structure_val()))){
-      output$costAlert <- renderText("You are at risk of your project exceeding 50% of the building's value. 
-                                     Projects of this size may require further city regulation.")
-    }
+    
   })
   
 }
